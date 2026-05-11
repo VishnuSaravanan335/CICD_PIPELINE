@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center animate-fade">
+    <div class="col-md-5">
+        <div class="glass-card p-5">
+            <h2 class="text-center mb-4 font-weight-bold">Welcome Back</h2>
+            <p class="text-center text-muted mb-5">Login to manage your finances professionally</p>
+            
+            <form method="POST">
+                <div class="mb-4">
+                    <label class="form-label text-muted small">Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="name@example.com" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label text-muted small">Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <div class="mb-4 form-check">
+                    <input type="checkbox" name="remember" class="form-check-input" id="remember">
+                    <label class="form-check-label text-muted small" for="remember">Remember me</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mb-4">Login</button>
+            </form>
+            
+            <div class="text-center">
+                <p class="small text-muted">Don't have an account? <a href="{{ url_for('auth.register') }}" class="text-primary text-decoration-none">Register here</a></p>
+                <a href="#" class="small text-muted text-decoration-none">Forgot password?</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

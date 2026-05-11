@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="animate-fade">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="fw-bold mb-0">Financial Analytics</h2>
+        <div class="btn-group">
+            <button class="btn btn-outline-primary btn-sm active">Monthly</button>
+            <button class="btn btn-outline-primary btn-sm">Yearly</button>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-6">
+            <div class="glass-card p-4">
+                <h5 class="fw-bold mb-4">Category Analysis</h5>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="categoryPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="glass-card p-4">
+                <h5 class="fw-bold mb-4">Spending Trends</h5>
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="trendBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-12">
+            <div class="glass-card p-4">
+                <h5 class="fw-bold mb-4">Category-wise Summary</h5>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Total Spent</th>
+                                <th>Percentage</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set total = category_data|map(attribute=1)|sum %}
+                            {% set colors = ['#a855f7', '#22d3ee', '#10b981', '#f43f5e', '#fbbf24', '#6366f1', '#ec4899'] %}
+                            {% for cat, amount in category_data %}
+                            <tr class="align-middle">
+                                <td class="ps-4 fw-bold">{{ cat }}</td>
+                                <td class="fw-bold text-accent">${{ "{:,.2f}".format(amount) }}</td>
+                                <td style="width: 40%;">
+                                    <div class="progress" style="height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px;">
+                                        <div class="progress-bar" role="progressbar" style="width: {{ (amount/total * 100)|round }}%; background: {{ colors[loop.index0 % colors|length] }}; box-shadow: 0 0 10px {{ colors[loop.index0 % colors|length] }}66;"></div>
+                                    </div>
+                                    <div class="text-muted small mt-1">{{ (amount/total * 100)|round }}% of total expenditure</div>
+                                </td>
+                                <td class="pe-4">
+                                    <span class="badge rounded-pill" style="background: {{ colors[loop.index0 % colors|length] }}22; color: {{ colors[loop.index0 % colors|length] }}; border: 1px solid {{ colors[loop.index0 % colors|length] }}44;">
+                                        NODE-{{ loop.index0 + 101 }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Vibrant Color Palette
+    const neonPalette = [
+        '#a855f7', // Purple
+        '#22d3ee', // Cyan
+        '#10b981', // Emerald
+        '#f43f5e', // Rose
+        '#fbbf24', // Amber
+        '#6366f1', // Indigo
+        '#ec4899'  // Pink
+    ];
+
+    // Pie Chart
+    const pieCtx = document.getElementById('categoryPieChart').getContext('2d');
+    const categories = {{ category_data|map(attribute=0)|list|tojson }};
+    const amounts = {{ category_data|map(attribute=1)|list|tojson }};
+    
+    // Create Gradients for Pie
+    const pieGradients = neonPalette.map(color => {
+        const g = pieCtx.createLinearGradient(0, 0, 0, 400);
+        g.addColorStop(0, color);
+        g.addColorStop(1, color + 'aa');
+        return g;
+    });
+
+    new Chart(pieCtx, {
+        type: 'doughnut',
+        data: {
+            labels: categories,
+            datasets: [{
+                data: amounts,
+                backgroundColor: pieGradients,
+                borderColor: 'rgba(2, 6, 23, 0.8)',
+                borderWidth: 2,
+                hoverOffset: 20
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { 
+                        color: '#f8fafc', 
+                        font: { family: 'Outfit', size: 13, weight: 'bold' },
+                        padding: 20
+                    }
+                }
+            },
+            animation: {
+                animateScale: true,
+                animateRotate: true,
+                duration: 2000,
+                easing: 'easeOutQuart'
+            }
+        }
+    });
+
+    // Bar Chart
+    const barCtx = document.getElementById('trendBarChart').getContext('2d');
+    const months = {{ monthly_data|map(attribute=0)|list|tojson }};
+    const monthlyAmounts = {{ monthly_data|map(attribute=1)|list|tojson }};
+    
+    const barGradient = barCtx.createLinearGradient(0, 0, 0, 400);
+    barGradient.addColorStop(0, '#22d3ee');
+    barGradient.addColorStop(1, '#a855f7');
+
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Financial Flow',
+                data: monthlyAmounts,
+                backgroundColor: barGradient,
+                borderRadius: 12,
+                borderSkipped: false,
+                hoverBackgroundColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                    ticks: { color: '#94a3b8', font: { family: 'Outfit' } }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#f8fafc', font: { family: 'Outfit', weight: 'bold' } }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            },
+            animation: {
+                duration: 1500,
+                easing: 'easeInOutExpo'
+            }
+        }
+    });
+</script>
+{% endblock %}

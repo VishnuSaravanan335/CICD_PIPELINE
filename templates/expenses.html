@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row g-4 animate-fade">
+    <div class="col-md-4">
+        <div class="glass-card p-4">
+            <h5 class="fw-bold mb-4">Add Expense</h5>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Amount</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-end-0 text-muted" style="border-color: var(--glass-border);">$</span>
+                        <input type="number" step="0.01" name="amount" class="form-control border-start-0" placeholder="0.00" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Category</label>
+                    <select name="category" class="form-select form-control" required>
+                        <option value="Food">Food</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Rent">Rent</option>
+                        <option value="Utilities">Utilities</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Health">Health</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Description</label>
+                    <input type="text" name="description" class="form-control" placeholder="e.g. Weekly groceries">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Date</label>
+                    <input type="date" name="date" class="form-control" value="{{ now }}">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Add Expense</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="glass-card p-4">
+            <h5 class="fw-bold mb-4">Expense History</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th class="text-end">Amount</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for expense in expenses %}
+                        <tr class="align-middle">
+                            <td class="text-muted small ps-4">{{ expense.date.strftime('%b %d, %Y') }}</td>
+                            <td><span class="badge rounded-pill" style="background: rgba(139, 92, 246, 0.2); color: var(--primary);">{{ expense.category }}</span></td>
+                            <td class="text-main fw-medium">{{ expense.description or 'No description' }}</td>
+                            <td class="text-end fw-bold text-danger">-${{ "{:,.2f}".format(expense.amount) }}</td>
+                            <td class="text-end pe-4">
+                                <form action="{{ url_for('expense.delete_expense', expense_id=expense.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm text-muted hover-text-danger" onclick="return confirm('Delete this expense?')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% if not expenses %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-5">No expenses recorded yet</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

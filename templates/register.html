@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center animate-fade">
+    <div class="col-md-5">
+        <div class="glass-card p-5">
+            <h2 class="text-center mb-4 font-weight-bold">Join FinTrack</h2>
+            <p class="text-center text-muted mb-5">Start your financial journey today</p>
+            
+            <form method="POST">
+                <div class="mb-4">
+                    <label class="form-label text-muted small">Username</label>
+                    <input type="text" name="username" class="form-control" placeholder="johndoe" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label text-muted small">Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="name@example.com" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label text-muted small">Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label text-muted small">Confirm Password</label>
+                    <input type="password" name="confirm_password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mb-4">Create Account</button>
+            </form>
+            
+            <div class="text-center">
+                <p class="small text-muted">Already have an account? <a href="{{ url_for('auth.login') }}" class="text-primary text-decoration-none">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

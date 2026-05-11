@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row g-4 animate-fade">
+    <div class="col-md-4">
+        <div class="glass-card p-4">
+            <h5 class="fw-bold mb-4">Add Income</h5>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Amount</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-end-0 text-muted" style="border-color: var(--glass-border);">$</span>
+                        <input type="number" step="0.01" name="amount" class="form-control border-start-0" placeholder="0.00" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Source</label>
+                    <input type="text" name="source" class="form-control" placeholder="e.g. Monthly Salary" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Date</label>
+                    <input type="date" name="date" class="form-control" value="{{ now }}">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Add Income</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="glass-card p-4">
+            <h5 class="fw-bold mb-4">Income History</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Source</th>
+                            <th class="text-end">Amount</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for inc in incomes %}
+                        <tr class="align-middle">
+                            <td class="text-muted small ps-4">{{ inc.date.strftime('%b %d, %Y') }}</td>
+                            <td><span class="text-main fw-bold">{{ inc.source }}</span></td>
+                            <td class="text-end fw-bold text-success">+${{ "{:,.2f}".format(inc.amount) }}</td>
+                            <td class="text-end pe-4">
+                                <form action="{{ url_for('income.delete_income', income_id=inc.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm text-muted hover-text-danger" onclick="return confirm('Delete this record?')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% if not incomes %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-5">No income records yet</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
