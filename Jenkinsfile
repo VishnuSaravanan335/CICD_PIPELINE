@@ -31,13 +31,19 @@ pipeline {
             }
         }
 
+        stage('Check Files') {
+            steps {
+                sh 'ls -al'
+            }
+        }
+
         stage('Docker Build & Push') {
             steps {
                 script {
                     // Standard secure credentials lookup for docker login
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh "echo \$DOCKER_PASSWORD | docker login -u \$DOCKER_USER --password-stdin"
-                        sh "docker build -t $REGISTRY/$IMAGE_NAME:\$BUILD_NUMBER ."
+                        sh "docker build -t $REGISTRY/$IMAGE_NAME:\$BUILD_NUMBER -f Dockerfile ."
                         sh "docker push $REGISTRY/$IMAGE_NAME:\$BUILD_NUMBER"
                     }
                 }
