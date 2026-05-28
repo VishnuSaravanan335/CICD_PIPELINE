@@ -3,10 +3,9 @@ kind: Service
 metadata:
   name: fintrack-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: fintrack
   ports:
     - port: 5000
       targetPort: 5000
-      nodePort: 30080
