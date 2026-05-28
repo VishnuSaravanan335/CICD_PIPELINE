@@ -19,7 +19,7 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'pytest || echo "No tests found, skipping..."'
+                sh 'cd fintrack && pytest || echo "No tests found, skipping..."'
             }
         }
 
